@@ -50,7 +50,7 @@ Una vez cargado el conjunto de datos, calculamos la matriz de correlación:
 ```{r}
 matriz.correlaciones <-cor(provincias)
 ```
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.align="center"}
 library(formattable)
 formattable(as.data.frame(matriz.correlaciones), list(
   area(row = 2, col = 3) ~ color_tile("#FFCCCB", "#FFCCCB"),
@@ -89,7 +89,6 @@ Con los datos de provincias, realizamos el análisis con un total de siete compo
 # Obtenemos los autovalores
 analisis.comp <- PCA(provincias, scale.unit = TRUE, ncp = 7, graph = FALSE)
 ```
-
 ```{r, echo=FALSE}
 formattable(round(as.data.frame(analisis.comp$eig), 2), list(
   area(row = 1) ~ color_tile("#458B00", "#458B00"),
@@ -208,7 +207,7 @@ formattable(round(as.data.frame(var$cos2), 2), list(
   area(row = c(1,5,6,7,8,9,10,11,14,15,17,18), col = 1) ~ color_tile("#0EBFE9", "#0EBFE9"),
   area(row = c(2,3,4,12,13), col = 2) ~ color_tile("#0EBFE9", "#0EBFE9"),
   area(row = c(16), col = 3) ~ color_tile("#0EBFE9", "#0EBFE9")
-)) %>% kable(caption = "Cosenos al cuadrado")
+))
 ```
 
 Para visualizar mejor los resultados, lo representamos gráficamente:
@@ -244,7 +243,7 @@ formattable(round(as.data.frame(var$contrib), 2), list(
   area(row = c(1,5,6,7,8,9,10,11,14,15,17,18), col = 1) ~ color_tile("#0EBFE9", "#0EBFE9"),
   area(row = c(2,3,4,12,13), col = 2) ~ color_tile("#0EBFE9", "#0EBFE9"),
   area(row = c(16), col = 3) ~ color_tile("#0EBFE9", "#0EBFE9")
-)) %>% kable(caption = "Contribuciones")
+))
 ```
 
 Así como su representación gráfica:
@@ -553,15 +552,13 @@ knitr::include_graphics("comparacion_2.png")
 Como podemos analizar en las gráficas anteriores, empleando 3 y 4 _cluster_ observamos valores de siluetas inferiores a 1 en el primer grupo, un indicativo de una mala agrupación de las provincias. Por el contrario, con 5 _cluster_ el número siluetas negativas se reduce de 6 a tan solo 2 observaciones. Además, si analizamos la silueta media en cada _cluster_:
 
 ```{r, fig.show=FALSE, echo=FALSE}
-for(x in c(3,4,5)) {
-  set.seed(1234)
-  RNGkind(sample.kind = "Rejection")
-  km.x <- kmeans(provincias_ST, x)
-  sil.x <- silhouette(km.x$cluster, dist(provincias_ST))
-  cat("Numero de cluster: ", x, "\n")
-  fviz_silhouette(sil.x, print.summary = T)
-}
-rm(km.x); rm(sil.x)
+temp.1 <- data.frame("cluster" = c(1,2,3), "size" = c(23,27,2), "ave.sil.width" = c(0.08, 0.41, 0.66))
+temp.2 <- data.frame("cluster" = c(1,2,3,4), "size" = c(14,19,17,2), "ave.sil.width" = c(0.05,0.34,0.16,0.66))
+temp.3 <- data.frame("cluster" = c(1,2,3,4,5), "size" = c(16,15,5,2,14), "ave.sil.width" = c(0.17,0.17,0.23,0.60,0.34))
+knitr::kable(temp.1, caption = "Numero de cluster: 3")
+knitr::kable(temp.2, caption = "Numero de cluster: 4")
+knitr::kable(temp.3, caption = "Numero de cluster: 5")
+rm(temp.1); rm(temp.2); rm(temp.3)
 ```
 
 Podemos observar que la media en el _cluster_ 1 en las dos primeras opciones presenta un valor medio cercano a 0, por lo que muchas de las observaciones (en especial aquellas cuyos valores de silueta son negativos), podrían pertenecer al _cluster_ actual o a otro cercano a él. Por el contrario, empleando 5 _cluster_ la media mejora significativamente, con un valor mínimo en la silueta de 0.17. Por tanto, realizamos el agrupamiento no jerárquico con 5 _cluster_.
