@@ -50,13 +50,23 @@ Una vez cargado el conjunto de datos, calculamos la matriz de correlación:
 ```{r}
 matriz.correlaciones <-cor(provincias)
 ```
-```{r, echo=FALSE, fig.align="center"}
+
+__PRIMERAS 9 COLUMNAS__
+
+```{r, echo=FALSE}
 library(formattable)
-formattable(as.data.frame(matriz.correlaciones), list(
+formattable(as.data.frame(matriz.correlaciones[, c(1:9)]), list(
+  area(row = 2, col = 3) ~ color_tile("#FFCCCB", "#FFCCCB")
+))
+```
+
+__ÚLTIMAS 9 COLUMNAS__
+
+```{r, echo=FALSE}
+formattable(as.data.frame(matriz.correlaciones[, c(10:18)]), list(
   area(row = 2, col = 3) ~ color_tile("#FFCCCB", "#FFCCCB"),
-  area(row = 2, col = 12) ~ color_tile("#FFCCCB", "#FFCCCB"),
-  area(row = 2, col = 13) ~ color_tile("#FFCCCB", "#FFCCCB"),
-  area(row = 4, col = 13) ~ color_tile("#FFCCCB", "#FFCCCB")
+  area(row = 2, col = 4) ~ color_tile("#FFCCCB", "#FFCCCB"),
+  area(row = 4, col = 4) ~ color_tile("#FFCCCB", "#FFCCCB")
 ))
 ```
 
@@ -540,7 +550,7 @@ knitr::include_graphics("elbow_silhouette.png")
 Comenzando con la salida obtenida en el criterio de _Elbow_, podríamos considerar como número óptimo de _cluster_ entre 3 y 5, dado que la variabilidad total continúa reduciéndose significativamente: de 3 a 4 _cluster_ se reduce en 47, mientras que de 4 a 5 en 57. Por el contrario, a partir de seis _cluster_ la reducción ya no es tan significativa. 
 
 Sin embargo, el criterio de _Silhouette_ recomienda emplear tan solo dos grupos, por lo que no parece dejar tan claro cual puede ser la agrupación óptima. Por tanto, ¿Qué número de _cluster_ elegimos? Por un lado, emplear tan solo dos grupos no es la mejor alternativa, dado que según el criterio de _Elbow_ la varibilidad continúa reduciéndose significativamente al aumentar el número de grupos: de 2 a 3 _cluster_ se reduce de 437 a 323, es decir, disminuye en más de 100; por lo que __el número óptimo estará comprendido entre 3 y 5__. 
-Para decidir el número de grupos, realizamos la agrupación con 3,4 y 5 _cluster_, comparando la calidad de cada modelo mediante los valores de anchura o _silhouette_ obtenidos:
+Para decidir el número de grupos, realizamos la agrupación con 3,4 y 5 _cluster_, comparando la calidad de cada modelo mediante los valores de anchura o _silhouette_ obtenidos, de forma previa a analizar la distribución de los grupos:
 
 ```{r, echo=FALSE,fig.align="center"}
 knitr::include_graphics("comparacion_1.png")
